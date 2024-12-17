@@ -3,7 +3,7 @@ import { PlanillaDocentes } from "@/components/PlanillaDocentes";
 
 export default function Home() {
   return (
-    <section>
+    <section className="container mx-auto my-16">
       <PlanillaDocentes />
     </section>
   );
