@@ -2,6 +2,8 @@ import AppProvider from "@/components/provider";
 import { Ubuntu } from "next/font/google";
 import type { Metadata } from "next";
 import "@/styles/globals.css";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -35,9 +37,11 @@ export default function RootLayout({
         className={`${ubuntu.variable} antialiased flex flex-col min-h-screen`}
       >
         <AppProvider>
+          <Navbar />
           <main className="flex-grow">
             {children}
           </main>
+          <Footer />
         </AppProvider>
       </body>
     </html>
