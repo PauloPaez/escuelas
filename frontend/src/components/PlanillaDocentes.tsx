@@ -79,10 +79,6 @@ export function PlanillaDocentes() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Planilla de Asistencia</CardTitle>
-        <CardDescription>Registro de asistencia de docentes</CardDescription>
-      </CardHeader>
       <CardContent>
         <CriterioBusqueda />
         <DocenteTable
