@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import { format, isValid } from "date-fns"
-import { es } from "date-fns/locale"
-import { Calendar } from "@/components/ui/calendar"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Calendar } from "@/components/ui/calendar"
+import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { DateRange } from 'react-day-picker';
+import { format, isValid } from "date-fns"
+import React, { useState } from 'react'
+import { es } from "date-fns/locale"
 
 interface Docente {
     nombre: string
@@ -20,14 +21,12 @@ interface DocenteModalProps {
     onSave: (updatedDocente: Docente) => void
 }
 
+
 export function DocenteModal({ docente, onClose, onSave }: DocenteModalProps) {
     const [editedDocente, setEditedDocente] = useState(docente)
     const [selectedAction, setSelectedAction] = useState<string>('')
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-    const [dateRange, setDateRange] = useState<{
-        from: Date | undefined
-        to: Date | undefined
-    }>({
+    const [dateRange, setDateRange] = useState<DateRange>({
         from: undefined,
         to: undefined,
     })
@@ -43,17 +42,13 @@ export function DocenteModal({ docente, onClose, onSave }: DocenteModalProps) {
         }
     }
 
-    const handleCalendarSelect = (value: Date | undefined) => {
+    const handleCalendarSelect = (value: Date | DateRange | undefined) => {
         if (selectedAction === 'licencia') {
-            setDateRange(prev => {
-                if (!prev.from || (prev.from && prev.to)) {
-                    return { from: value, to: undefined }
-                } else {
-                    return { ...prev, to: value }
-                }
-            })
+            if (value && 'from' in value) {
+                setDateRange(value as DateRange)
+            }
         } else {
-            setSelectedDate(value)
+            setSelectedDate(value as Date | undefined)
         }
     }
 
@@ -113,23 +108,50 @@ export function DocenteModal({ docente, onClose, onSave }: DocenteModalProps) {
                 <div className="flex-grow flex flex-col space-y-4 overflow-y-auto">
                     <p><strong>Escuela:</strong> {docente.escuela}</p>
                     <div className="flex-grow relative">
-                        <Calendar
-                            mode={selectedAction === 'licencia' ? "range" : "single"}
-                            selected={selectedAction === 'licencia' ? dateRange : selectedDate}
-                            onSelect={handleCalendarSelect}
-                            className="rounded-md border"
-                            numberOfMonths={1}
-                            locale={es}
-                            modifiers={{
-                                selected: isDateSelected
-                            }}
-                        />
+                        {selectedAction === 'licencia' ? (
+                            <Calendar
+                                mode="range"
+                                selected={dateRange}
+                                onSelect={handleCalendarSelect}
+                                className="rounded-md border"
+                                numberOfMonths={1}
+                                locale={es}
+                                modifiers={{
+                                    selected: isDateSelected
+                                }}
+                                footer={getSelectedDateInfo() ? (
+                                    <p className="text-sm text-center">
+                                        {getSelectedDateInfo()}
+                                    </p>
+                                ) : (
+                                    <p className="text-sm text-center">
+                                        Selecciona un rango de fechas para la licencia
+                                    </p>
+                                )}
+                            />
+                        ) : (
+                            <Calendar
+                                mode="single"
+                                selected={selectedDate}
+                                onSelect={handleCalendarSelect}
+                                className="rounded-md border"
+                                numberOfMonths={1}
+                                locale={es}
+                                modifiers={{
+                                    selected: isDateSelected
+                                }}
+                                footer={getSelectedDateInfo() ? (
+                                    <p className="text-sm text-center">
+                                        {getSelectedDateInfo()}
+                                    </p>
+                                ) : (
+                                    <p className="text-sm text-center">
+                                        Selecciona una fecha para la acción
+                                    </p>
+                                )}
+                            />
+                        )}
                     </div>
-                    {getSelectedDateInfo() && (
-                        <p className="text-sm text-center">
-                            {getSelectedDateInfo()}
-                        </p>
-                    )}
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="action" className="text-right">
                             Acción
