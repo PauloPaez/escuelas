@@ -26,8 +26,7 @@ import { Input } from "@/components/ui/input"
 const formSchema = z.object({
     escuela: z.string().min(1, "Seleccione una escuela"),
     direccion: z.string().min(1, "Ingrese una dirección"),
-    mes: z.coerce.number().min(1).max(12, "Mes inválido"),
-    anio: z.coerce.number().min(2000).max(2100, "Año inválido"),
+    mes: z.string().min(1, "Seleccione un mes"),
 })
 
 export function CriterioBusqueda() {
@@ -37,8 +36,7 @@ export function CriterioBusqueda() {
         defaultValues: {
             escuela: "",
             direccion: "",
-            mes: undefined,
-            anio: undefined,
+            mes: new Date().toISOString().slice(0, 7),
         },
     })
 
@@ -48,8 +46,8 @@ export function CriterioBusqueda() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="flex space-x-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-4">
+                <div className="flex justify-around max-w-5xl mx-auto space-x-4">
                     <FormField
                         control={form.control}
                         name="escuela"
@@ -90,36 +88,16 @@ export function CriterioBusqueda() {
                             <FormItem>
                                 <FormControl>
                                     <Input
-                                        type="number"
+                                        type="month"
                                         placeholder="Mes"
                                         {...field}
-                                        min={1}
-                                        max={12}
                                     />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="anio"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        placeholder="Año"
-                                        {...field}
-                                        min={2000}
-                                        max={2100}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button type="submit">Buscar</Button>
+                    <Button className="bg-naranjaPrincipal" type="submit">Buscar</Button>
                 </div>
             </form>
         </Form>
